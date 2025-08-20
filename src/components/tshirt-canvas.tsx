@@ -109,10 +109,11 @@ export default function TShirtCanvas() {
         className="relative"
         style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
         onClick={(e) => {
+          setSelectedElementId(null);
             // Deselect element if clicking on the canvas background
-            if (e.target === e.currentTarget || (e.target as HTMLElement).id === 'tshirt-image-container') {
-                setSelectedElementId(null);
-            }
+            // if (e.target === e.currentTarget || (e.target as HTMLElement).id === 'tshirt-image-container') {
+            //     setSelectedElementId(null);
+            // }
         }}
         >
         <div id="tshirt-image-container" className="absolute inset-0">
@@ -161,7 +162,7 @@ export default function TShirtCanvas() {
                 }}
                 style={{...style, zIndex: index + 1}}
                 bounds="parent"
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation(); // Prevent deselecting when clicking an element
                   setSelectedElementId(element.id)
                 }}

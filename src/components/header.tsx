@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { toast as toaster } from "@/hooks/use-toast";
 import { addToCart as addToCartFlow } from "@/ai/flows/add-to-cart";
 import { toPng } from 'html-to-image';
+import Image from "next/image";
 
 
 const USER_TOKEN_KEY = 'userToken';
@@ -101,8 +102,12 @@ export default function Header() {
     setIsAddingToCart(true);
 
     try {
-        const frontImage = designs.front.length > 0 ? await getDesignAsImage('front') : undefined;
-        const backImage = designs.back.length > 0 ? await getDesignAsImage('back') : undefined;
+        const rawFrontImage = designs.front.length > 0 ? await getDesignAsImage('front') : undefined;
+        const frontImage = rawFrontImage ?? undefined;
+
+        const rawBackImage = designs.back.length > 0 ? await getDesignAsImage('back') : undefined;
+        const backImage = rawBackImage ?? undefined;
+
         
         // Generate a unique ID for the custom product to ensure it's treated as a new item
         const customProductId = `custom-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -150,9 +155,16 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between p-4 border-b bg-card">
-      <h1 className="text-2xl font-bold font-headline text-primary">
-        TeeCustom
-      </h1>
+      <a href="https://clothologyglobal.co.in" target="_blank" rel="noopener noreferrer" className="flex items-center">
+        <Image
+          src="/logoClothMobile.jpg"
+          alt="clothologyglobal Logo"
+          width={220}
+          height={80}
+          className="object-contain"
+        />
+      </a>
+
       <div className="flex items-center gap-2">
         <Button onClick={handleAddToCart} variant="outline" disabled={isAddingToCart}>
            {isAddingToCart ? (
