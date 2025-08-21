@@ -54,7 +54,7 @@ export default function TextPanel() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      text: "Hello World",
+      text: "HeY BuDDy",
       fontFamily: "Arial",
       fontSize: 32,
       color: "#000000",

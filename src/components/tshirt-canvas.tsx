@@ -1,95 +1,109 @@
-"use client";
+'use client';
 
 import Image from "next/image";
 import { useDesign } from "@/contexts/design-context";
-import type { TextElement, ImageElement, DesignElement } from "@/lib/types";
-import { Rnd } from "react-rnd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import html2canvas from "html2canvas";
+import axios from "axios";
 import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
+import { Rnd } from "react-rnd";
+import type { TextElement, ImageElement, DesignElement } from "@/lib/types";
+import { useSearchParams } from 'next/navigation';
 
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 600;
 
-const TSHIRT_IMAGES = {
-  front: 'https://kyletest.in/image/tshirt-front.png',
-  back: 'https://kyletest.in/image/tshirt-back.png',
-}
-
 export default function TShirtCanvas() {
+  const searchParams = useSearchParams();
+
+  const slug = searchParams.get('slug');
+  const price = Number(searchParams.get('price'));
+  const productId = searchParams.get('productId');
+  const selectedColor = searchParams.get('selectedColor');
+  const selectedSize = searchParams.get('selectedSize');
+ const [userToken, setUserToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setUserToken(token);
+  }, []);
+
+  if (!userToken) {
+    return <p>Please log in to customize your product.</p>;
+  }
   const { elements, updateElement, selectedElementId, setSelectedElementId, side, toggleSide } = useDesign();
+  const [productImages, setProductImages] = useState<{ front: string, back: string }>({
+    front: '',
+    back: ''
+  });
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
-  const handleDoubleClick = (id: string) => {
-    const element = elements.find(el => el.id === id);
-    if (element?.type === 'text') {
-      setIsEditing(id);
+ useEffect(() => {
+  if (!slug) return;
+
+  async function fetchProduct() {
+    try {
+      const { data } = await axios.get(`https://clothologyglobal.co.in/api/v1/products/${slug}`);
+      setProductImages({
+        front: data.primary_img,
+        back: data.secondary_img,
+      });
+    } catch (err) {
+      console.error("Failed to load product", err);
     }
+  }
+
+  fetchProduct();
+}, [slug]);
+
+
+  const getCanvasImage = async (): Promise<{ front: string; back: string }> => {
+    const capture = async (id: string) => {
+      const el = document.getElementById(id);
+      if (!el) throw new Error(`Canvas "${id}" not found`);
+      const canvas = await html2canvas(el);
+      return canvas.toDataURL('image/png');
+    };
+
+    return {
+      front: await capture('tshirt-front'),
+      back: await capture('tshirt-back'),
+    };
   };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    updateElement(id, { text: e.target.value } as Partial<TextElement>);
-  };
+  const handleAddToCart = async () => {
+    try {
+      const { front, back } = await getCanvasImage();
 
-  const handleBlur = () => {
-    setIsEditing(null);
-  };
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/add_to_cart`, {
+        product_id: productId,
+        prod_variation_id: selectedSize,
+        quantity: 1,
+        price: price,
+        color: selectedColor,
+        size: selectedSize,
+        front_image: front,
+        back_image: back,
+      }, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }
+      });
 
+      if (response.data.status) {
+        alert('Item added to cart!');
+        window.location.href = 'https://clothologyglobal.co.in/cart';
+      } else {
+        alert('Failed to add to cart: ' + response.data.message);
+      }
 
-  const renderElement = (element: DesignElement) => {
-    if (element.type === "text") {
-      const textStyle: React.CSSProperties = {
-        fontFamily: element.fontFamily,
-        fontSize: `${element.fontSize}px`,
-        color: element.color,
-        whiteSpace: "nowrap",
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'transparent',
-        border: 'none',
-        outline: 'none',
-        padding: 0,
-        margin: 0,
-      };
-
-      return (
-        isEditing === element.id ? (
-          <input
-            type="text"
-            value={element.text}
-            onChange={(e) => handleTextChange(e, element.id)}
-            onBlur={handleBlur}
-            autoFocus
-            style={textStyle}
-            className="nodrag" // Prevents Rnd from dragging while editing
-          />
-        ) : (
-          <div
-            style={textStyle}
-            onDoubleClick={() => handleDoubleClick(element.id)}
-          >
-            {element.text}
-          </div>
-        )
-      );
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Error adding to cart.');
     }
-
-    if (element.type === "image") {
-      return (
-        <Image
-          src={element.src}
-          alt="Custom design element"
-          fill
-          style={{objectFit: "contain"}}
-          className="pointer-events-none"
-        />
-      );
-    }
-
-    return null;
   };
 
   const designAreaStyle: React.CSSProperties = {
@@ -103,32 +117,33 @@ export default function TShirtCanvas() {
     overflow: 'hidden',
   };
 
+  const renderDesignArea = (id: string) => (
+    <div id={id} className="absolute inset-0">
+      <Image
+        src={side === 'front' ? productImages.front : productImages.back}
+        alt="T-Shirt"
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+        style={{ objectFit: "contain" }}
+        priority
+      />
+    </div>
+  );
+
+  if (!slug || !productId || !selectedColor || !selectedSize || !price) {
+  return <p>Error: Missing product information. Please access this page from the product page.</p>;
+}
+
+
   return (
     <div className="w-full h-full bg-card rounded-lg flex flex-col items-center justify-center p-4 overflow-hidden shadow-inner gap-4">
-      <div 
+      <div
         className="relative"
         style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-        onClick={(e) => {
-          setSelectedElementId(null);
-            // Deselect element if clicking on the canvas background
-            // if (e.target === e.currentTarget || (e.target as HTMLElement).id === 'tshirt-image-container') {
-            //     setSelectedElementId(null);
-            // }
-        }}
-        >
-        <div id="tshirt-image-container" className="absolute inset-0">
-            <Image
-            src={TSHIRT_IMAGES[side]}
-            data-ai-hint="white t-shirt"
-            alt="White T-Shirt"
-            width={CANVAS_WIDTH}
-            height={CANVAS_HEIGHT}
-            style={{objectFit: "contain"}}
-            priority
-            key={side} // Re-render image on side change
-            />
-        </div>
-        
+        onClick={() => setSelectedElementId(null)}
+      >
+        {side === 'front' ? renderDesignArea('tshirt-front') : renderDesignArea('tshirt-back')}
+
         <Button variant="outline" onClick={toggleSide} className="absolute top-2 right-2 z-20">
           <RotateCcw className="mr-2 h-4 w-4" />
           Rotate
@@ -160,21 +175,24 @@ export default function TShirtCanvas() {
                     ...position,
                   });
                 }}
-                style={{...style, zIndex: index + 1}}
+                style={{ ...style, zIndex: index + 1 }}
                 bounds="parent"
                 onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                  e.stopPropagation(); // Prevent deselecting when clicking an element
-                  setSelectedElementId(element.id)
+                  e.stopPropagation();
+                  setSelectedElementId(element.id);
                 }}
-                className={isEditing === element.id ? 'z-50' : ''}
                 cancel=".nodrag"
               >
-                {renderElement(element)}
+                {/* Render text or image element */}
               </Rnd>
             );
           })}
         </div>
       </div>
+
+      <Button onClick={handleAddToCart} className="mt-4">
+        Add to Cart
+      </Button>
     </div>
   );
 }

@@ -123,6 +123,8 @@ export default function Header() {
             productId: customProductId,
         });
 
+        console.log("Add to cart result:", result);
+
         if (result.success) {
             toaster({
                 title: "Added to Cart!",

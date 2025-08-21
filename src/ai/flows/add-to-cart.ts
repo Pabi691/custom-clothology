@@ -45,6 +45,7 @@ const addToCartFlow = ai.defineFlow(
     const { userToken, size, price, color, frontImage, backImage, productId } = input;
 
     console.log('Received input:', input);
+    console.log('productId', productId);
 
     const API_URL = process.env.API_URL;
 
@@ -72,9 +73,8 @@ const addToCartFlow = ai.defineFlow(
             Accept: 'application/json',
           },
         }
-      );
-
-      // console.log('productId', productId);
+      ); 
+      console.log('response', response);
 
       if (response.data.status) {
         return {
