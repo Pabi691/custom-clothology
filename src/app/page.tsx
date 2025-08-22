@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, Suspense  } from 'react';
 import Header from '@/components/header';
 import TShirtCustomizer from '@/components/tshirt-customizer';
 import useSessionTimeout from '@/hooks/use-session-timeout';
@@ -35,7 +35,9 @@ export default function Home() {
     <div className="flex flex-col h-screen bg-background font-body">
       <Header />
       <main className="flex-1 overflow-auto">
-        <TShirtCustomizer />
+        <Suspense fallback={<div className="p-8 text-center">Loading customizer...</div>}>
+          <TShirtCustomizer />
+        </Suspense>
       </main>
     </div>
   );

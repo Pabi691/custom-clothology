@@ -183,7 +183,21 @@ export default function TShirtCanvas() {
                 }}
                 cancel=".nodrag"
               >
-                {/* Render text or image element */}
+                {element.type === 'text' && (
+                  <div className="nodrag w-full h-full flex items-center justify-center text-center">
+                    <span>{(element as TextElement).text}</span>
+                  </div>
+                )}
+
+                {element.type === 'image' && (
+                  <Image
+                    src={(element as ImageElement).src}
+                    alt="Design"
+                    fill
+                    className="nodrag object-contain"
+                  />
+                )}
+
               </Rnd>
             );
           })}
