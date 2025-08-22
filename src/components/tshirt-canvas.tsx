@@ -41,7 +41,11 @@ export default function TShirtCanvas() {
 
   async function fetchProduct() {
     try {
-      const { data } = await axios.get(`https://clothologyglobal.co.in/api/v1/products/${slug}`);
+      const { data } = await axios.get(`https://connect.clothologyglobal.co.in/api/v1/get_slug_data/${slug}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
       setProductImages({
         front: data.primary_img,
         back: data.secondary_img,
