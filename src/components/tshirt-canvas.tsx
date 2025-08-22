@@ -23,21 +23,18 @@ export default function TShirtCanvas() {
   const selectedColor = searchParams.get('selectedColor');
   const selectedSize = searchParams.get('selectedSize');
  const [userToken, setUserToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("userToken");
-    setUserToken(token);
-  }, []);
-
-  if (!userToken) {
-    return <p>Please log in to customize your product.</p>;
-  }
+  
   const { elements, updateElement, selectedElementId, setSelectedElementId, side, toggleSide } = useDesign();
   const [productImages, setProductImages] = useState<{ front: string, back: string }>({
     front: '',
     back: ''
   });
   const [isEditing, setIsEditing] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    setUserToken(token);
+  }, []);
 
  useEffect(() => {
   if (!slug) return;
@@ -56,6 +53,14 @@ export default function TShirtCanvas() {
 
   fetchProduct();
 }, [slug]);
+
+if (!slug || !productId || !selectedColor || !selectedSize || !price) {
+    return <p>Error: Missing product information. Please access this page from the product page.</p>;
+  }
+
+if (!userToken) {
+    return <p>Please log in to customize your product.</p>;
+  }
 
 
   const getCanvasImage = async (): Promise<{ front: string; back: string }> => {
@@ -130,9 +135,7 @@ export default function TShirtCanvas() {
     </div>
   );
 
-  if (!slug || !productId || !selectedColor || !selectedSize || !price) {
-  return <p>Error: Missing product information. Please access this page from the product page.</p>;
-}
+  
 
 
   return (
