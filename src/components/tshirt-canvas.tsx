@@ -25,7 +25,7 @@ export default function TShirtCanvas() {
  const [userToken, setUserToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     setUserToken(token);
   }, []);
 
