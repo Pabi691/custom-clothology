@@ -6,6 +6,7 @@ import useSessionTimeout from '@/hooks/use-session-timeout';
 import TShirtCustomizer from '@/components/tshirt-customizer';
 
 const LOGOUT_URL = 'https://clothologyglobal.co.in/login';
+const USER_TOKEN_KEY = `${process.env.NEXT_PUBLIC_TOKEN_KEY}`;
 
 export default function TokenGate() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ export default function TokenGate() {
   );
 
   useEffect(() => {
-    if (!tokenFromUrl) {
+    if (!tokenFromUrl || tokenFromUrl === USER_TOKEN_KEY) {
       window.location.href = LOGOUT_URL;
     } else {
       localStorage.setItem('userToken', tokenFromUrl);
