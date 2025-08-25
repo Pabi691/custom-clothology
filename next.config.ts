@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'kyletest.in',
+        hostname: 'cdn.clothologyglobal.co.in',
         port: '',
         pathname: '/**',
       },

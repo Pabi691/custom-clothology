@@ -46,9 +46,10 @@ export default function TShirtCanvas() {
           Authorization: `Bearer ${userToken}`,
         },
       });
+      console.log("Fetched product data:", data);
       setProductImages({
-        front: data.primary_img,
-        back: data.secondary_img,
+        front: data.product_details.primary_img,
+        back: data.product_details.secondary_img,
       });
     } catch (err) {
       console.error("Failed to load product", err);
@@ -102,6 +103,9 @@ if (!userToken) {
         }
       });
 
+      console.log('Add to cart response:', response.data);
+      return;
+
       if (response.data.status) {
         alert('Item added to cart!');
         window.location.href = 'https://clothologyglobal.co.in/cart';
@@ -126,10 +130,17 @@ if (!userToken) {
     overflow: 'hidden',
   };
 
-  const renderDesignArea = (id: string) => (
-    <div id={id} className="absolute inset-0">
+  const renderDesignArea = (id: string, imageUrl: string, isVisible: boolean) => {
+  if (!imageUrl) return null;
+
+  return (
+    <div
+      id={id}
+      className="absolute inset-0"
+      style={{ display: isVisible ? 'block' : 'none' }}
+    >
       <Image
-        src={side === 'front' ? productImages.front : productImages.back}
+        src={imageUrl}
         alt="T-Shirt"
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
@@ -138,6 +149,8 @@ if (!userToken) {
       />
     </div>
   );
+};
+
 
   
 
@@ -149,7 +162,11 @@ if (!userToken) {
         style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
         onClick={() => setSelectedElementId(null)}
       >
-        {side === 'front' ? renderDesignArea('tshirt-front') : renderDesignArea('tshirt-back')}
+        <>
+          {renderDesignArea('tshirt-front', productImages.front, side === 'front')}
+          {renderDesignArea('tshirt-back', productImages.back, side === 'back')}
+        </>
+
 
         <Button variant="outline" onClick={toggleSide} className="absolute top-2 right-2 z-20">
           <RotateCcw className="mr-2 h-4 w-4" />
