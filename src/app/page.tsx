@@ -4,18 +4,19 @@ import { useEffect, useState, Suspense } from 'react';
 import Header from '@/components/header';
 import TShirtCustomizer from '@/components/tshirt-customizer';
 import useSessionTimeout from '@/hooks/use-session-timeout';
+import { useSearchParams } from 'next/navigation';
 
-const USER_TOKEN_KEY = 'userToken';
 const LOGOUT_URL = 'https://clothologyglobal.co.in/login';
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const searchParams = useSearchParams();
+
+  const tokenFromUrl = searchParams.get("token");
 
   useEffect(() => {
-    // Run only on client
-    const token = localStorage.getItem(USER_TOKEN_KEY);
 
-    if (!token) {
+    if (!tokenFromUrl) {
       window.location.href = LOGOUT_URL;
     } else {
       setIsAuthenticated(true); // Safe to render app
@@ -26,7 +27,6 @@ export default function Home() {
     if (isAuthenticated) {
       // Only start timeout after token check passed
       useSessionTimeout(30 * 60 * 1000, () => {
-        localStorage.removeItem(USER_TOKEN_KEY);
         window.location.href = LOGOUT_URL;
       });
     }
