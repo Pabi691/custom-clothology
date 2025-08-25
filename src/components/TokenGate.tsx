@@ -23,13 +23,20 @@ export default function TokenGate() {
   );
 
   useEffect(() => {
-    if (!tokenFromUrl && tokenFromUrl === USER_TOKEN_KEY) {
+  console.log("Token from URL:", tokenFromUrl);
+  console.log("USER_TOKEN_KEY:", USER_TOKEN_KEY);
+
+  if (!tokenFromUrl) {
+    window.location.href = LOGOUT_URL;
+  } else {
+    if (tokenFromUrl === USER_TOKEN_KEY) {
       window.location.href = LOGOUT_URL;
-    } else {
-      localStorage.setItem('userToken', tokenFromUrl ?? "");
-      setIsAuthenticated(true);
     }
-  }, [tokenFromUrl]);
+    localStorage.setItem('userToken', tokenFromUrl);
+    setIsAuthenticated(true);
+  }
+}, [tokenFromUrl]);
+
 
   if (!isAuthenticated) return null;
 
