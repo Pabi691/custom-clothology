@@ -12,24 +12,23 @@ export default function TokenGate() {
   const tokenFromUrl = searchParams.get('token');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // ✅ Always call the hook
+  useSessionTimeout(
+    isAuthenticated ? 30 * 60 * 1000 : null,
+    () => {
+      localStorage.removeItem('userToken');
+      window.location.href = LOGOUT_URL;
+    }
+  );
+
   useEffect(() => {
     if (!tokenFromUrl) {
       window.location.href = LOGOUT_URL;
     } else {
-      // Optionally store it in localStorage
       localStorage.setItem('userToken', tokenFromUrl);
       setIsAuthenticated(true);
     }
   }, [tokenFromUrl]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      useSessionTimeout(30 * 60 * 1000, () => {
-        localStorage.removeItem('userToken');
-        window.location.href = LOGOUT_URL;
-      });
-    }
-  }, [isAuthenticated]);
 
   if (!isAuthenticated) return null;
 

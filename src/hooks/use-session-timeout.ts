@@ -1,34 +1,33 @@
-
 "use client";
 
 import { useEffect, useRef } from 'react';
 
-const useSessionTimeout = (timeout: number, onTimeout: () => void) => {
+const useSessionTimeout = (timeout: number | null | undefined, onTimeout: () => void) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetTimer = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    timeoutRef.current = setTimeout(onTimeout, timeout);
+    timeoutRef.current = setTimeout(onTimeout, timeout as number); // we guard this below
   };
 
   useEffect(() => {
-    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];
+    // ✅ Skip setup if timeout is null or undefined
+    if (!timeout) return;
 
-    const resetTimerOnActivity = () => {
-      resetTimer();
-    };
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];
+    const resetTimerOnActivity = () => resetTimer();
 
     // Set the initial timer
     resetTimer();
 
-    // Add event listeners to reset the timer on user activity
+    // Add event listeners
     events.forEach(event => {
       window.addEventListener(event, resetTimerOnActivity);
     });
 
-    // Cleanup function to remove event listeners and clear the timeout
+    // Cleanup
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
