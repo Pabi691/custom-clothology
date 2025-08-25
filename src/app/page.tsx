@@ -1,33 +1,26 @@
-
 "use client";
 
-import { useEffect, Suspense  } from 'react';
+import { useEffect, Suspense } from 'react';
 import Header from '@/components/header';
 import TShirtCustomizer from '@/components/tshirt-customizer';
 import useSessionTimeout from '@/hooks/use-session-timeout';
 
 const USER_TOKEN_KEY = 'userToken';
-const DEFAULT_USER_TOKEN = '980|lVdbsIUQTH1ZOsBe1dXvtAO4uR9XxDURT13dPZSL';
-const LOGOUT_URL = 'https://clothologyglobal.co.in/';
+const LOGOUT_URL = 'https://clothologyglobal.co.in/login';
 
 export default function Home() {
+  // Set up session timeout
   useSessionTimeout(30 * 60 * 1000, () => {
     localStorage.removeItem(USER_TOKEN_KEY);
     window.location.href = LOGOUT_URL;
   });
 
   useEffect(() => {
-    // Check for user token, set a default for now, and redirect if none.
-    let token = localStorage.getItem(USER_TOKEN_KEY);
-    
-    if (!token) {
-      // For testing purposes as requested, we'll set a default token.
-      // In a real app, you might redirect immediately if there's no token.
-      localStorage.setItem(USER_TOKEN_KEY, DEFAULT_USER_TOKEN);
-      token = DEFAULT_USER_TOKEN;
+    const token = localStorage.getItem(USER_TOKEN_KEY);
 
-      // Uncomment the line below to redirect if the token is missing
-      // window.location.href = LOGOUT_URL;
+    if (!token) {
+      // Redirect to login if no token found
+      window.location.href = LOGOUT_URL;
     }
   }, []);
 
