@@ -12,7 +12,7 @@ import type { TextElement, ImageElement, DesignElement } from "@/lib/types";
 import { useSearchParams } from 'next/navigation';
 
 const CANVAS_WIDTH = 500;
-const CANVAS_HEIGHT = 600;
+const CANVAS_HEIGHT = 500;
 
 function TextEditor({
   selectedElement,
@@ -236,14 +236,25 @@ export default function TShirtCanvas() {
 
   const designAreaStyle: React.CSSProperties = {
     position: "absolute",
-    top: "20%",
+    top: "25%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: "35%",
+    height: "40%",
+    // border: "2px dashed hsl(var(--primary) / 0.5)",
+    overflow: "visible",
+    zIndex: 10,
+  };
+
+   const borderStyle: React.CSSProperties = {
+    position: "absolute",
+    top: "25%",
     left: "50%",
     transform: "translateX(-50%)",
     width: "35%",
     height: "40%",
     border: "2px dashed hsl(var(--primary) / 0.5)",
-    overflow: "visible",
-    zIndex: 10,
+    zIndex: 9,
   };
 
   const renderTShirtBase = (imageUrl: string) =>
@@ -257,8 +268,6 @@ export default function TShirtCanvas() {
     elements.map((element, index) => {
       const isSelected = selectedElementId === element.id;
       const style: React.CSSProperties = {
-        outline: isSelected ? "2px dashed hsl(var(--primary))" : "none",
-        outlineOffset: "4px",
         cursor: "grab",
       };
 
@@ -277,9 +286,10 @@ export default function TShirtCanvas() {
               ...position,
             })
           }
+          className={`${isSelected ? 'outline-2 outline-dashed outline-primary outline-offset-4 html2canvas-ignore' : ''}`}
           style={{ ...style, zIndex: index + 1 }}
           bounds="parent"
-          onClick={(e: React.MouseEvent) => { // Fixed TypeScript error
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             setSelectedElementId(element.id);
           }}
@@ -315,12 +325,16 @@ export default function TShirtCanvas() {
       );
     });
 
+
   const selectedElement = elements.find((el) => el.id === selectedElementId);
 
   return (
-    <div className="w-full h-full bg-card rounded-lg flex flex-col items-center justify-center p-4 overflow-hidden shadow-inner gap-4">
+    <div className="w-full h-full bg-card rounded-lg flex flex-col items-center justify-start p-4 overflow-hidden shadow-inner gap-4">
       {!isPreviewing ? (
         <>
+          <Button onClick={handlePreview} className="html2canvas-ignore" disabled={isProcessing}>
+            {isProcessing ? "Generating..." : "Preview"}
+          </Button>
           <div className="relative" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
             {/* Front side */}
             <div
@@ -333,6 +347,7 @@ export default function TShirtCanvas() {
               onClick={() => setSelectedElementId(null)}
             >
               {renderTShirtBase(productImages.front)}
+              <div style={borderStyle} className="html2canvas-ignore"></div>
               <div style={designAreaStyle}>{renderDesignElements()}</div>
             </div>
 
@@ -347,6 +362,7 @@ export default function TShirtCanvas() {
               onClick={() => setSelectedElementId(null)}
             >
               {renderTShirtBase(productImages.back)}
+              <div style={borderStyle} className="html2canvas-ignore"></div>
               <div style={designAreaStyle}>{renderDesignElements()}</div>
             </div>
 
@@ -357,13 +373,9 @@ export default function TShirtCanvas() {
               disabled={isProcessing}
             >
               <RotateCcw className="mr-2 h-4 w-4" />
-              Rotate
+              {/* Rotate */}
             </Button>
           </div>
-
-          <Button onClick={handlePreview} className="mt-4 html2canvas-ignore" disabled={isProcessing}>
-            {isProcessing ? "Generating..." : "Preview"}
-          </Button>
           {/* The TextEditor is commented out in your code, keeping it that way */}
         </>
       ) : (

@@ -29,9 +29,9 @@ export default function ControlPanel() {
           <TabsTrigger value="layers">
             <Layers className="w-4 h-4 mr-1" /> Layers
           </TabsTrigger>
-          <TabsTrigger value="product">
+          {/* <TabsTrigger value="product">
             <ShoppingBag className="w-4 h-4 mr-1" /> Product
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <div className="flex-1 overflow-y-auto p-1">
           <TabsContent value="text" className="mt-4">
@@ -49,9 +49,9 @@ export default function ControlPanel() {
            <TabsContent value="layers" className="mt-4">
             <LayersPanel />
           </TabsContent>
-          <TabsContent value="product" className="mt-4">
+          {/* <TabsContent value="product" className="mt-4">
             <ProductPanel />
-          </TabsContent>
+          </TabsContent> */}
         </div>
       </Tabs>
     </div>

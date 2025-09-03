@@ -18,6 +18,9 @@ export interface TextElement extends BaseElement {
 export interface ImageElement extends BaseElement {
   type: 'image';
   src: string;
+  zoom: number;
+  offsetX: number;
+  offsetY: number;
 }
 
 export type DesignElement = TextElement | ImageElement;
