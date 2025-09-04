@@ -236,11 +236,11 @@ export default function TShirtCanvas() {
 
   const designAreaStyle: React.CSSProperties = {
     position: "absolute",
-    top: "25%",
+    top: "20%",
     left: "50%",
     transform: "translateX(-50%)",
-    width: "35%",
-    height: "40%",
+    width: "40%",
+    height: "60%",
     // border: "2px dashed hsl(var(--primary) / 0.5)",
     overflow: "visible",
     zIndex: 10,
@@ -248,11 +248,11 @@ export default function TShirtCanvas() {
 
    const borderStyle: React.CSSProperties = {
     position: "absolute",
-    top: "25%",
+    top: "20%",
     left: "50%",
     transform: "translateX(-50%)",
-    width: "35%",
-    height: "40%",
+    width: "40%",
+    height: "60%",
     border: "2px dashed hsl(var(--primary) / 0.5)",
     zIndex: 9,
   };

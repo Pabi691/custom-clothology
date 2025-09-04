@@ -23,8 +23,8 @@ export default function TokenGate() {
   );
 
   useEffect(() => {
-  console.log("Token from URL:", tokenFromUrl);
-  console.log("USER_TOKEN_KEY:", USER_TOKEN_KEY);
+  // console.log("Token from URL:", tokenFromUrl);
+  // console.log("USER_TOKEN_KEY:", USER_TOKEN_KEY);
 
   if (!tokenFromUrl) {
     window.location.href = LOGOUT_URL;
