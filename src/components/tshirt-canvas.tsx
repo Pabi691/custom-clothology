@@ -318,7 +318,7 @@ export default function TShirtCanvas() {
               src={(element as ImageElement).src}
               alt="Design"
               fill
-              className="nodrag object-contain"
+              className="nodrag"
             />
           )}
         </Rnd>
