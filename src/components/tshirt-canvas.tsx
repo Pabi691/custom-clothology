@@ -84,7 +84,7 @@ export default function TShirtCanvas() {
   const [previewImage, setPreviewImage] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [cartImageToGenerate, setCartImageToGenerate] = useState<'front' | 'back' | null>(null);
-
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const frontCanvasRef = useRef<HTMLDivElement>(null);
   const backCanvasRef = useRef<HTMLDivElement>(null);
 
@@ -327,6 +327,7 @@ export default function TShirtCanvas() {
 
 
   const selectedElement = elements.find((el) => el.id === selectedElementId);
+  
 
   return (
     <div className="w-full h-full bg-card rounded-lg flex flex-col items-center justify-start p-4 overflow-hidden shadow-inner gap-4">
@@ -385,12 +386,29 @@ export default function TShirtCanvas() {
             {previewImage && (
               <Image src={previewImage} alt="Design Preview" width={300} height={400} />
             )}
+
+            <p className="mt-5">It will be printed like this preview. Make sure you are happy before continuing.</p>
+            <ul>
+              <li>- Are the text and images clear and easy to read?</li>
+              <li>- Do the design elements fit in the safety area?</li>
+              <li>- Does the background fill out to the edges?</li>
+              <li>- Is everything spelled correctly?</li>
+            </ul>
           </div>
+
+
+          <div className="flex gap-2 items-center">
+            <input type="checkbox" id="confirm" className="html2canvas-ignore" checked={isConfirmed} onChange={() => setIsConfirmed(!isConfirmed)} />
+            <label htmlFor="confirm" className="html2canvas-ignore">
+              I have authorization to use the design , I have reviewed and approve this design for printing.
+            </label>
+          </div>
+
           <div className="flex gap-4">
             <Button onClick={() => setIsPreviewing(false)} variant="outline" disabled={isProcessing}>
               Back to Editor
             </Button>
-            <Button onClick={handleAddToCart} disabled={isProcessing}>
+            <Button onClick={handleAddToCart} disabled={isProcessing || !isConfirmed}>
               {isProcessing ? "Adding..." : "Add to Cart"}
             </Button>
           </div>

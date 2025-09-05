@@ -86,7 +86,7 @@ export default function Header() {
         className="flex items-center"
       >
         <Image
-          src="/logoClothMobile.jpg"
+          src="/logo.png"
           alt="Clothologyglobal Logo"
           width={220}
           height={80}
