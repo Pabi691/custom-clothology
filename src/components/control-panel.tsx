@@ -6,14 +6,14 @@ import AiPanel from "@/components/panels/ai-panel";
 import UploadPanel from "@/components/panels/upload-panel";
 import IdeasPanel from "@/components/panels/ideas-panel";
 import LayersPanel from "@/components/panels/layers-panel";
-import ProductPanel from "@/components/panels/product-panel";
-import { Brush, Sparkles, Upload, Lightbulb, Layers, ShoppingBag } from "lucide-react";
+import { Brush, Sparkles, Upload, Lightbulb, Layers } from "lucide-react";
 
 export default function ControlPanel() {
   return (
     <div className="h-full flex flex-col">
       <Tabs defaultValue="text" className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-5 sticky top-0 bg-background z-10">
+          {/* Note: Updated grid-cols-5 since 'Product' tab is commented out */}
           <TabsTrigger value="text">
             <Brush className="w-4 h-4 mr-1" /> Text
           </TabsTrigger>
@@ -29,29 +29,23 @@ export default function ControlPanel() {
           <TabsTrigger value="layers">
             <Layers className="w-4 h-4 mr-1" /> Layers
           </TabsTrigger>
-          {/* <TabsTrigger value="product">
-            <ShoppingBag className="w-4 h-4 mr-1" /> Product
-          </TabsTrigger> */}
         </TabsList>
-        <div className="flex-1 overflow-y-auto p-1">
-          <TabsContent value="text" className="mt-4">
+        <div className="flex-1 overflow-y-auto p-4">
+          <TabsContent value="text">
             <TextPanel />
           </TabsContent>
-          <TabsContent value="ai" className="mt-4">
+          <TabsContent value="ai">
             <AiPanel />
           </TabsContent>
-          <TabsContent value="upload" className="mt-4">
+          <TabsContent value="upload">
             <UploadPanel />
           </TabsContent>
-          <TabsContent value="ideas" className="mt-4">
+          <TabsContent value="ideas">
             <IdeasPanel />
           </TabsContent>
-           <TabsContent value="layers" className="mt-4">
+          <TabsContent value="layers">
             <LayersPanel />
           </TabsContent>
-          {/* <TabsContent value="product" className="mt-4">
-            <ProductPanel />
-          </TabsContent> */}
         </div>
       </Tabs>
     </div>

@@ -1,10 +1,12 @@
-'use client';
+// components/header.tsx
 
-import Link from "next/link";
+"use client";
+
+import * as React from "react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Moon, Sun } from "lucide-react";
+import { Download, Moon, Sun, ShoppingCart } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,68 +15,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDesign } from "@/contexts/design-context";
 import { useToast } from "@/hooks/use-toast";
-import { toPng } from 'html-to-image';
 import Image from "next/image";
 
-export default function Header() {
+interface HeaderProps {
+  onPreviewClick: () => void;
+  onAddToCartClick: () => void;
+  isProcessing: boolean;
+  isLoggedIn: boolean;
+}
+
+export default function Header({ onPreviewClick, onAddToCartClick, isProcessing, isLoggedIn }: HeaderProps) {
   const { setTheme } = useTheme();
   const { side, setSide } = useDesign();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const getDesignAsImage = async (targetSide: 'front' | 'back') => {
-    const designArea = document.getElementById('design-area');
-    if (!designArea) return null;
-
-    const originalSide = side;
-    if (originalSide !== targetSide) {
-      await new Promise(resolve => {
-        setSide(targetSide);
-        setTimeout(resolve, 100);
-      });
-    }
-
-    const image = await toPng(designArea, {
-      fontEmbedCSS: "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');",
-    });
-
-    if (originalSide !== targetSide) {
-      await new Promise(resolve => {
-        setSide(originalSide);
-        setTimeout(resolve, 100);
-      });
-    }
-
-    return image;
-  };
-
+  // You can still keep the download functionality here if you want a separate download button
   const handleDownload = async () => {
-    try {
-      setIsDownloading(true);
-      const image = await getDesignAsImage(side);
-      if (image) {
-        const link = document.createElement('a');
-        link.download = `tshirt-design-${side}.png`;
-        link.href = image;
-        link.click();
-
-        toast({
-          title: "Download Started",
-          description: `Your ${side} design is downloading.`,
-        });
-      } else {
-        throw new Error("Could not generate image for download.");
-      }
-    } catch (error) {
-      console.error("Download error:", error);
-      toast({
-        variant: "destructive",
-        title: "Download Failed",
-        description: "An error occurred while preparing your design for download.",
-      });
-    } finally {
-      setIsDownloading(false);
-    }
+    // ... (Your existing download logic here)
   };
 
   return (
@@ -95,10 +53,27 @@ export default function Header() {
       </a>
 
       <div className="flex items-center gap-2">
-        <Button onClick={handleDownload} disabled={isDownloading}>
+        {/* <Button 
+          onClick={onPreviewClick} 
+          variant="outline" 
+          disabled={isProcessing}
+        >
+          {isProcessing ? "Processing..." : "Preview"}
+        </Button>
+        <Button 
+          onClick={onAddToCartClick} 
+          disabled={isProcessing || !isLoggedIn}
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" /> 
+          {isProcessing ? "Adding..." : "Add to Cart"}
+        </Button>
+        <Button 
+          onClick={handleDownload} 
+          disabled={isDownloading}
+        >
           <Download className="mr-2 h-4 w-4" />
           {isDownloading ? "Downloading..." : "Download Design"}
-        </Button>
+        </Button> */}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

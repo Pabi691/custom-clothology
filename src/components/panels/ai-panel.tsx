@@ -44,9 +44,12 @@ export default function AiPanel() {
       const result = await generateTShirtDesign({ prompt: values.prompt });
       if (result.image) {
         addElement({
-          type: "image",
-          src: result.image,
-        });
+        type: "image",
+        src: result.image,
+        zoom: 1,
+        offsetX: 0,
+        offsetY: 0,
+      });
         toast({
           title: "Image Generated!",
           description: "The AI-generated image has been added to your design.",
@@ -73,7 +76,7 @@ export default function AiPanel() {
         Describe the image you want to create on your t-shirt.
       </p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-4">
           <FormField
             control={form.control}
             name="prompt"
@@ -85,6 +88,7 @@ export default function AiPanel() {
                     placeholder="e.g., A majestic lion wearing a crown, vintage style"
                     {...field}
                     rows={4}
+                    maxLength={200}
                   />
                 </FormControl>
                 <FormMessage />
