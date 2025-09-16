@@ -207,6 +207,9 @@ export default function CustomizerLayout() {
           description: "Your customized product has been added to the cart.",
         });
         setIsPreviewing(false);
+        setTimeout(() => {
+          window.location.href = "https://clothologyglobal.co.in/cart";
+        }, 2000);
       } else {
         throw new Error(response.data.message);
       }
