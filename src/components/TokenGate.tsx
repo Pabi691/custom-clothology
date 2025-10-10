@@ -35,18 +35,31 @@ export default function TokenGate() {
 //   }
 // }, [tokenFromUrl]);
 useEffect(() => {
-  if (!tokenFromUrl || tokenFromUrl === USER_TOKEN_KEY) {
-    // Save the full URL as redirect target
-    const currentUrl = window.location.href; // full customizer URL
+  if (
+    !tokenFromUrl || 
+    tokenFromUrl === USER_TOKEN_KEY || 
+    tokenFromUrl === "null"
+  ) {
+    const currentUrl = window.location.href;
     const encodedUrl = encodeURIComponent(currentUrl);
-
-    // Redirect to login with full redirect param
     window.location.href = `${LOGOUT_URL}?redirect=${encodedUrl}`;
   } else {
     localStorage.setItem('userToken', tokenFromUrl);
     setIsAuthenticated(true);
   }
 }, [tokenFromUrl]);
+
+// useEffect(() => {
+//   if (!tokenFromUrl || tokenFromUrl === USER_TOKEN_KEY) {
+//     const currentUrl = window.location.href;
+//     const encodedUrl = encodeURIComponent(currentUrl);
+
+//     window.location.href = `${LOGOUT_URL}?redirect=${encodedUrl}`;
+//   } else {
+//     localStorage.setItem('userToken', tokenFromUrl);
+//     setIsAuthenticated(true);
+//   }
+// }, [tokenFromUrl]);
 
 
 
