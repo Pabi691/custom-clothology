@@ -22,20 +22,32 @@ export default function TokenGate() {
     }
   );
 
-  useEffect(() => {
-  // console.log("Token from URL:", tokenFromUrl);
-  // console.log("USER_TOKEN_KEY:", USER_TOKEN_KEY);
+//   useEffect(() => {
 
-  if (!tokenFromUrl) {
-    window.location.href = LOGOUT_URL;
+//   if (!tokenFromUrl) {
+//     window.location.href = LOGOUT_URL;
+//   } else {
+//     if (tokenFromUrl === USER_TOKEN_KEY) {
+//       window.location.href = LOGOUT_URL;
+//     }
+//     localStorage.setItem('userToken', tokenFromUrl);
+//     setIsAuthenticated(true);
+//   }
+// }, [tokenFromUrl]);
+useEffect(() => {
+  if (!tokenFromUrl || tokenFromUrl === USER_TOKEN_KEY) {
+    // Save the full URL as redirect target
+    const currentUrl = window.location.href; // full customizer URL
+    const encodedUrl = encodeURIComponent(currentUrl);
+
+    // Redirect to login with full redirect param
+    window.location.href = `${LOGOUT_URL}?redirect=${encodedUrl}`;
   } else {
-    if (tokenFromUrl === USER_TOKEN_KEY) {
-      window.location.href = LOGOUT_URL;
-    }
     localStorage.setItem('userToken', tokenFromUrl);
     setIsAuthenticated(true);
   }
 }, [tokenFromUrl]);
+
 
 
   if (!isAuthenticated) return null;
