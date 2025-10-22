@@ -141,7 +141,7 @@ export default function TShirtCanvas({
     <div className="w-full h-full rounded-lg flex flex-col items-center justify-start p-4 overflow-hidden gap-4">
       {!isPreviewing ? (
         <>
-          <div className="relative w-full h-full max-w-[500px] max-h-[500px]">
+          <div className="relative w-full h-full max-w-[280px] lg:max-w-[500px] max-h-[300px] min-h-[300px] lg:max-h-[500px]">
              {/* Front side (rendered conditionally) */}
             <div
               id="design-area"
